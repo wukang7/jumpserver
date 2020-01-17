@@ -5,196 +5,272 @@
 [![Ansible](https://img.shields.io/badge/ansible-2.4.2.0-blue.svg?style=plastic)](https://www.ansible.com/)
 [![Paramiko](https://img.shields.io/badge/paramiko-2.4.1-green.svg?style=plastic)](http://www.paramiko.org/)
 
-Jumpserver 是全球首款完全开源的堡垒机，使用 GNU GPL v2.0 开源协议，是符合 4A 机制的运维安全审计系统。
+**安装步骤**
 
-Jumpserver 使用 Python / Django 进行开发，遵循 Web 2.0 规范，配备了业界领先的 Web Terminal 方案，交互界面美观、用户体验好。
+- 下面的步骤需要很强的动手能力, 部署过程中你会面临各种各样的问题
 
-Jumpserver 采纳分布式架构，支持多机房跨区域部署，支持横向扩展，无资产数量及并发限制。
+1. 安装 python3.6 mysql Redis
 
-改变世界，从一点点开始。
+```
+# 编译或者直接从仓库获取都可以, 版本要求参考最上方环境要求
+```
 
-注: [KubeOperator](https://github.com/KubeOperator/KubeOperator) 是 Jumpserver 团队在 Kubernetes 领域的的又一全新力作，欢迎关注和使用。
+1. 创建 py3 虚拟环境
 
-## 核心功能列表
+```
+$ python3.6 -m venv /opt/py3
+```
 
-<table>
-  <tr>
-    <td rowspan="7">身份认证<br>Authentication</td>
-    <td rowspan="4">登录认证</td>
-    <td>资源统一登录与认证</td>
-  </tr>
-  <tr>
-    <td>LDAP/AD 认证</td>
-  </tr>
-  <tr>
-    <td>RADIUS 认证</td>
-  </tr>
-  <tr>
-    <td>OpenID 认证（实现单点登录）</td>
-  </tr>
-  <tr>
-    <td rowspan="2">MFA认证</td>
-    <td>MFA 二次认证（Google Authenticator）</td>
-  </tr>
-  <tr>
-    <td>RADIUS 二次认证</td>
-  </tr>
-  <tr>
-    <td>登录复核（X-PACK）</td>
-    <td>用户登录行为受管理员的监管与控制</td>
-  </tr>
-  <tr>
-    <td rowspan="11">账号管理<br>Account</td>
-    <td rowspan="2">集中账号</td>
-    <td>管理用户管理</td>
-  </tr>
-  <tr>
-    <td>系统用户管理</td>
-  </tr>
-  <tr>
-    <td rowspan="4">统一密码</td>
-    <td>资产密码托管</td>
-  </tr>
-  <tr>
-    <td>自动生成密码</td>
-  </tr>
-  <tr>
-    <td>自动推送密码</td>
-  </tr>
-  <tr>
-    <td>密码过期设置</td>
-  </tr>
-  <tr>
-    <td rowspan="2">批量改密（X-PACK）</td>
-    <td>定期批量改密</td>
-  </tr>
-  <tr>
-    <td>多种密码策略</td>
-  </tr>
-  <tr>
-    <td>多云纳管（X-PACK）</td>
-    <td>对私有云、公有云资产自动统一纳管</td>
-  </tr>
-  <tr>
-    <td>收集用户（X-PACK）</td>
-    <td>自定义任务定期收集主机用户</td>
-  </tr>
-  <tr>
-    <td>密码匣子（X-PACK）</td>
-    <td>统一对资产主机的用户密码进行查看、更新、测试操作</td>
-  </tr>
-  <tr>
-    <td rowspan="15">授权控制<br>Authorization</td>
-    <td>多维授权</td>
-    <td>对用户、用户组、资产、资产节点、应用以及系统用户进行授权</td>
-  </tr>
-  <tr>
-    <td rowspan="4">资产授权</td>
-    <td>资产以树状结构进行展示</td>
-  </tr>
-  <tr>
-    <td>资产和节点均可灵活授权</td>
-  </tr>
-  <tr>
-    <td>节点内资产自动继承授权</td>
-  </tr>
-  <tr>
-    <td>子节点自动继承父节点授权</td>
-  </tr>
-  <tr>
-    <td rowspan="2">应用授权</td>
-    <td>实现更细粒度的应用级授权</td>
-  </tr>
-  <tr>
-    <td>MySQL 数据库应用、RemoteApp 远程应用（X-PACK）</td>
-  </tr>
-  <tr>
-    <td>动作授权</td>
-    <td>实现对授权资产的文件上传、下载以及连接动作的控制</td>
-  </tr>
-  <tr>
-    <td>时间授权</td>
-    <td>实现对授权资源使用时间段的限制</td>
-  </tr>
-  <tr>
-    <td>特权指令</td>
-    <td>实现对特权指令的使用（支持黑白名单）</td>
-  </tr>
-  <tr>
-    <td>命令过滤</td>
-    <td>实现对授权系统用户所执行的命令进行控制</td>
-  </tr>
-  <tr>
-    <td>文件传输</td>
-    <td>SFTP 文件上传/下载</td>
-  </tr>
-  <tr>
-    <td>文件管理</td>
-    <td>实现 Web SFTP 文件管理</td>
-  </tr>
-  <tr>
-    <td>工单管理（X-PACK）</td>
-    <td>支持对用户登录请求行为进行控制</td>
-  </tr>
-  <tr>
-    <td>组织管理（X-PACK）</td>
-    <td>实现多租户管理与权限隔离</td>
-  </tr>
-  <tr>
-    <td rowspan="7">安全审计<br>Audit</td>
-    <td>操作审计</td>
-    <td>用户操作行为审计</td>
-  </tr>
-  <tr>
-    <td rowspan="2">会话审计</td>
-    <td>在线会话内容审计</td>
-  </tr>
-  <tr>
-    <td>历史会话内容审计</td>
-  </tr>
-  <tr>
-    <td rowspan="2">录像审计</td>
-    <td>支持对 Linux、Windows 等资产操作的录像进行回放审计</td>
-  </tr>
-  <tr>
-    <td>支持对 RemoteApp（X-PACK）、MySQL 等应用操作的录像进行回放审计</td>
-  </tr>
-  <tr>
-    <td>指令审计</td>
-    <td>支持对资产和应用等操作的命令进行审计</td>
-  </tr>
-  <tr>
-    <td>文件传输</td>
-    <td>可对文件的上传、下载记录进行审计</td>
-  </tr>
-</table>
+1. 载入 py3 虚拟环境
 
-## 安装及使用指南
+```
+# 每次操作 jumpserver 都需要使用下面的命令载入 py3 虚拟环境
+$ source /opt/py3/bin/activate
+# 部分系统可能会提示 source: not found , 可以使用 "." 代替 "source"
+$ . /opt/py3/bin/activate
 
--  [Docker 快速安装文档](http://docs.jumpserver.org/zh/docs/dockerinstall.html)
--  [Step by Step 安装文档](http://docs.jumpserver.org/zh/docs/step_by_step.html)
--  [完整文档](http://docs.jumpserver.org)
+# 偷懒可以在 ~/.bashrc 末尾加入 source /opt/py3/bin/activate
+```
 
-## 演示视频和截屏
+1. 获取 jumpserver 代码
 
-我们提供了演示视频和系统截图可以让你快速了解 Jumpserver：
+```
+$ cd /opt
+$ git clone --depth=1 https://github.com/jumpserver/jumpserver.git
+# 如果没有安装 git 请先安装
 
-- [演示视频](https://jumpserver.oss-cn-hangzhou.aliyuncs.com/jms-media/%E3%80%90%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91%E3%80%91Jumpserver%20%E5%A0%A1%E5%9E%92%E6%9C%BA%20V1.5.0%20%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91%20-%20final.mp4)
-- [系统截图](http://docs.jumpserver.org/zh/docs/snapshot.html)
+# 网络有问题可以从 https://demo.jumpserver.org/download/jumpserver/ 下载
+```
 
-## SDK
+1. 安装依赖
 
-我们编写了一些SDK，供您的其它系统快速和 Jumpserver API 交互：
+```
+$ cd /opt/jumpserver/requirements
+# 根据当前系统, 选择对应的文件执行即可
+# 如 Centos: yum install -y $(cat rpm_requirements.txt)
+# 如 Ubuntu: apt-get install -y $(cat deb_requirements.txt)
 
-- [Python](https://github.com/jumpserver/jumpserver-python-sdk) Jumpserver 其它组件使用这个 SDK 完成交互
-- [Java](https://github.com/KaiJunYan/jumpserver-java-sdk.git) 恺珺同学提供的 Java 版本的 SDK
+$ pip install wheel
+$ pip install -r requirements.txt
+# 确保已经载入 py3 虚拟环境, 中间如果遇到报错一般是依赖包没装全, 可以通过 搜索引擎 解决
+```
 
-## License & Copyright
+1. 修改配置文件
 
-Copyright (c) 2014-2019 飞致云 FIT2CLOUD, All rights reserved.
+```
+$ cd /opt/jumpserver
+$ cp config_example.yml config.yml
+$ vim config.yml
+# 注意 SECRET_KEY 和 BOOTSTRAP_TOKEN 不能使用纯数字字符串
+```
 
-Licensed under The GNU General Public License version 2 (GPLv2)  (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+1. 启动 jumpserver
 
-https://www.gnu.org/licenses/gpl-2.0.html
+```
+$ cd /opt/jumpserver
+$ ./jms start  # 可以 -d 参数在后台运行 ./jms start -d
+# 确保已经载入 py3 虚拟环境, 中间如果遇到报错请参考 FAQ 文档或者 搜索引擎 解决
+```
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+1. 正常部署 koko 组件
+
+```
+$ cd /opt
+# 访问 https://github.com/jumpserver/koko/releases 下载对应 release 包并解压到 /opt目录
+$ wget https://github.com/jumpserver/koko/releases/download/1.5.6/koko-master-linux-amd64.tar.gz
+
+$ tar xf koko-master-linux-amd64.tar.gz
+
+$ chown -R root:root kokodir
+$ cd kokodir
+
+$ cp config_example.yml config.yml
+$ vim config.yml
+# BOOTSTRAP_TOKEN 需要从 jumpserver/config.yml 里面获取, 保证一致
+$ ./koko  # 可以 -d 参数在后台运行 ./koko -d
+```
+
+8.1. docker 部署 koko 组件
+
+```
+# 如果前面已经部署了 koko, 可以跳过部署 koko
+
+$ docker run --name jms_koko -d -p 2222:2222 -p 127.0.0.1:5000:5000 -e CORE_HOST=http://<Jumpserver_url> -e BOOTSTRAP_TOKEN=<Jumpserver_BOOTSTRAP_TOKEN> --restart=always jumpserver/jms_koko:<Tag>
+# <Jumpserver_url> 为 jumpserver 的 url 地址, <Jumpserver_BOOTSTRAP_TOKEN> 需要从 jumpserver/config.yml 里面获取, 保证一致, <Tag> 是版本
+# 例: docker run --name jms_koko -d -p 2222:2222 -p 127.0.0.1:5000:5000 -e CORE_HOST=http://192.168.244.144:8080 -e BOOTSTRAP_TOKEN=abcdefg1234 --restart=always jumpserver/jms_koko:1.5.6
+```
+
+1. 正常安装并启动 guacamole 组件
+
+```
+# 建议使用 docker 部署 guacamole 组件 , 部分环境可能无法正常编译安装
+
+$ cd /opt
+$ git clone --depth=1 https://github.com/jumpserver/docker-guacamole.git
+$ cd /opt/docker-guacamole
+$ tar xf guacamole-server-1.0.0.tar.gz
+$ cd /opt/docker-guacamole/guacamole-server-1.0.0
+
+# 根据 http://guacamole.apache.org/doc/gug/installing-guacamole.html 文档安装对应的依赖包
+
+# Ubuntu: apt-get install -y libcairo2-dev libjpeg-turbo8-dev libpng12-dev libossp-uuid-dev
+# Ubuntu: apt-get install -y libavcodec-dev libavutil-dev libswscale-dev libfreerdp-dev libpango1.0-dev libssh2-1-dev libtelnet-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
+# ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp
+
+# Debian: apt-get install -y libcairo2-dev libjpeg62-turbo-dev libpng12-dev libossp-uuid-dev
+# Debian: apt-get install -y libavcodec-dev libavutil-dev libswscale-dev libfreerdp-dev libpango1.0-dev libssh2-1-dev libtelnet-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev
+# ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp
+
+# yum -y localinstall --nogpgcheck https://mirrors.aliyun.com/rpmfusion/free/el/rpmfusion-free-release-7.noarch.rpm https://mirrors.aliyun.com/rpmfusion/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
+# Fedora/CentOS/RHEL: yum install -y cairo-devel libjpeg-turbo-devel libpng-devel uuid-devel
+# Fedora/CentOS/RHEL: yum install -y ffmpeg-devel freerdp1.2-devel pango-devel libssh2-devel libtelnet-devel libvncserver-devel pulseaudio-libs-devel openssl-devel libvorbis-devel libwebp-devel
+# ln -s /usr/local/lib/freerdp /usr/lib64/freerdp
+
+$ autoreconf -fi
+$ ./configure --with-init-dir=/etc/init.d
+$ make
+$ make install
+
+# 先在当前环境配置好 jdk8 jre8
+# Ubuntu: apt-get -y install default-jre default-jdk
+# Centos: yum install -y java-1.8.0-openjdk
+
+# 访问 https://tomcat.apache.org/download-90.cgi 下载最新的 tomcat9
+$ mkdir -p /config/guacamole /config/guacamole/extensions /config/guacamole/record
+$ chown daemon:daemon /config/guacamole/record /config/guacamole/drive
+$ cd /config
+$ wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz
+$ tar xf apache-tomcat-9.0.30.tar.gz
+$ mv apache-tomcat-9.0.30 tomcat9
+$ rm -rf /config/tomcat9/webapps/*
+$ sed -i 's/Connector port="8080"/Connector port="8081"/g' /config/tomcat9/conf/server.xml
+$ echo "java.util.logging.ConsoleHandler.encoding = UTF-8" >> /config/tomcat9/conf/logging.properties
+$ ln -sf /opt/docker-guacamole/guacamole-1.0.0.war /config/tomcat9/webapps/ROOT.war
+$ ln -sf /opt/docker-guacamole/guacamole-auth-jumpserver-1.0.0.jar /config/guacamole/extensions/guacamole-auth-jumpserver-1.0.0.jar
+$ ln -sf /opt/docker-guacamole/root/app/guacamole/guacamole.properties /config/guacamole/guacamole.properties
+$ wget https://github.com/ibuler/ssh-forward/releases/download/v0.0.5/linux-amd64.tar.gz
+$ tar xf linux-amd64.tar.gz -C /bin/
+$ chmod +x /bin/ssh-forward
+
+# 设置 guacamole 环境
+$ export JUMPSERVER_SERVER=http://127.0.0.1:8080  # http://127.0.0.1:8080 指 jumpserver 访问地址
+$ echo "export JUMPSERVER_SERVER=http://127.0.0.1:8080" >> ~/.bashrc
+
+# BOOTSTRAP_TOKEN 为 Jumpserver/config.yml 里面的 BOOTSTRAP_TOKEN 值
+$ export BOOTSTRAP_TOKEN=******
+$ echo "export BOOTSTRAP_TOKEN=******" >> ~/.bashrc
+$ export JUMPSERVER_KEY_DIR=/config/guacamole/keys
+$ echo "export JUMPSERVER_KEY_DIR=/config/guacamole/keys" >> ~/.bashrc
+$ export GUACAMOLE_HOME=/config/guacamole
+$ echo "export GUACAMOLE_HOME=/config/guacamole" >> ~/.bashrc
+$ export GUACAMOLE_LOG_LEVEL=ERROR
+$ echo "export GUACAMOLE_LOG_LEVEL=ERROR" >> ~/.bashrc
+$ export JUMPSERVER_CLEAR_DRIVE_SESSION=true
+$ echo "export JUMPSERVER_CLEAR_DRIVE_SESSION=true" >> ~/.bashrc
+$ export JUMPSERVER_ENABLE_DRIVE=true
+$ echo "export JUMPSERVER_ENABLE_DRIVE=true" >> ~/.bashrc
+
+$ /etc/init.d/guacd start
+$ sh /config/tomcat9/bin/startup.sh
+```
+
+9.1 docker 部署 guacamole 组件
+
+```
+$ docker run --name jms_guacamole -d -p 127.0.0.1:8081:8080 -e JUMPSERVER_SERVER=http://<Jumpserver_url> -e BOOTSTRAP_TOKEN=<Jumpserver_BOOTSTRAP_TOKEN> jumpserver/jms_guacamole:<Tag>
+# <Jumpserver_url> 为 jumpserver 的 url 地址, <Jumpserver_BOOTSTRAP_TOKEN> 需要从 jumpserver/config.yml 里面获取, 保证一致, <Tag> 是版本
+# 例: docker run --name jms_guacamole -d -p 127.0.0.1:8081:8080 -e JUMPSERVER_SERVER=http://192.168.244.144:8080 -e BOOTSTRAP_TOKEN=abcdefg1234 jumpserver/jms_guacamole:1.5.6
+```
+
+1. 下载 luna 组件
+
+```
+$ cd /opt
+
+# 访问 https://github.com/jumpserver/luna/releases 获取
+$ wget https://github.com/jumpserver/luna/releases/download/1.5.6/luna.tar.gz
+
+$ tar xf luna.tar.gz
+$ chown -R root:root luna
+```
+
+1. 配置 nginx 整合各组件
+
+```
+# 参考 http://nginx.org/en/linux_packages.html 文档安装最新的稳定版 nginx
+
+$ rm -rf /etc/nginx/conf.d/default.conf
+$ vim /etc/nginx/conf.d/jumpserver.conf
+
+server {
+    listen 80;
+
+    client_max_body_size 100m;  # 录像及文件上传大小限制
+
+    location /luna/ {
+        try_files $uri / /index.html;
+        alias /opt/luna/;  # luna 路径, 如果修改安装目录, 此处需要修改
+    }
+
+    location /media/ {
+        add_header Content-Encoding gzip;
+        root /opt/jumpserver/data/;  # 录像位置, 如果修改安装目录, 此处需要修改
+    }
+
+    location /static/ {
+        root /opt/jumpserver/data/;  # 静态资源, 如果修改安装目录, 此处需要修改
+    }
+
+    location /koko/ {
+        proxy_pass       http://localhost:5000;
+        proxy_buffering off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        access_log off;
+    }
+
+    location /guacamole/ {
+        proxy_pass       http://localhost:8081/;
+        proxy_buffering off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $http_connection;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        access_log off;
+    }
+
+    location /ws/ {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://localhost:8070;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+$ nginx -t
+$ nginx -s reload
+```
+
+1. 开始使用 Jumpserver
+
+```
+# 检查应用是否已经正常运行
+# 服务全部启动后, 访问 jumpserver 服务器 nginx 代理的 80 端口, 不要通过8080端口访问
+# 默认账号: admin 密码: admin
+```
